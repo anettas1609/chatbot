@@ -1,23 +1,22 @@
 import openai
-import streamlit as st
 
-# Nastavení API klíče OpenAI
-openai.api_key = "TVŮJ_API_KLÍČ"
+# Nastavení API klíče
+openai.api_key = 'tvůj_api_klíč'  # Nahraď tento text svým skutečným API klíčem
 
-# Nastavení Streamlit aplikace
-st.title("Chatbot na ochranu před kyberkriminalitou")
-
-# Uživatelský vstup
-user_input = st.text_input("Zadej svůj dotaz:")
-
-# Odeslání dotazu do OpenAI API
-if st.button("Odeslat"):
-    if user_input:
+# Funkce pro komunikaci s OpenAI
+def get_response_from_openai(query):
+    try:
+        # Tato metoda je pro starší verzi openai==0.28
         response = openai.Completion.create(
-            engine="text-davinci-003",  # Model pro verzi 0.28
-            prompt=user_input,  # Uživatelský vstup
-            max_tokens=150  # Počet tokenů v odpovědi
+            engine="davinci",  # "davinci" nebo "curie", "babbage" pro starší verzi
+            prompt=query,
+            max_tokens=150
         )
-        st.write(response["choices"][0]["text"])  # Výpis odpovědi
-    else:
-        st.write("Zadej prosím dotaz.")
+        return response.choices[0].text.strip()  # Vrací první odpověď
+    except openai.error.OpenAIError as e:
+        return f"Chyba při komunikaci s OpenAI: {e}"
+
+# Testovací dotaz
+query = "Jak se bránit podvodným e-mailům?"
+response = get_response_from_openai(query)
+print(response)
