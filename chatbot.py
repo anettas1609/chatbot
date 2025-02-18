@@ -30,5 +30,3 @@ if st.button("Odeslat"):
             st.error(f"Chyba při komunikaci s OpenAI: {e}")
     else:
         st.warning("Zadej prosím dotaz.")
-
-``
