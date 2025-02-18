@@ -17,14 +17,13 @@ dotaz = st.text_input("Zadej svůj dotaz:")
 if st.button("Odeslat"):
     if dotaz:
         try:
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "Jsem chatbot zaměřený na kybernetickou bezpečnost."},
-                    {"role": "user", "content": dotaz}
-                ]
+            response = openai.Completion.create(
+                model="gpt-3.5-turbo",  # nebo použij jiný model jako gpt-4
+                prompt=f"Uživatel se ptá: {dotaz}\nOdpověď:",
+                max_tokens=150,  # Změň dle potřeby
+                temperature=0.7  # Vliv na kreativitu odpovědí
             )
-            odpoved = response["choices"][0]["message"]["content"]
+            odpoved = response['choices'][0]['text'].strip()  # Vyčistí text
             st.success(odpoved)
         except Exception as e:
             st.error(f"Chyba při komunikaci s OpenAI: {str(e)}")
