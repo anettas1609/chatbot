@@ -19,8 +19,16 @@ if st.button("Odeslat"):
         try:
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
-                messages=[{"role": "system", "content": "Jsem chatbot zaměřený na kybernetickou bezpečnost."},
-                          {"role": "user", "content": dotaz}]
+                messages=[
+                    {"role": "system", "content": "Jsem chatbot zaměřený na kybernetickou bezpečnost."},
+                    {"role": "user", "content": dotaz}
+                ]
             )
-            odpoved = response.choices[0].message.content
-   
+            odpoved = response["choices"][0]["message"]["content"]
+            st.success(odpoved)
+        except openai.error.OpenAIError as e:
+            st.error(f"Chyba při komunikaci s OpenAI: {e}")
+    else:
+        st.warning("Zadej prosím dotaz.")
+
+``
