@@ -26,7 +26,7 @@ if st.button("Odeslat"):
             )
             odpoved = response["choices"][0]["message"]["content"]
             st.success(odpoved)
-        except openai.error.OpenAIError as e:
-            st.error(f"Chyba při komunikaci s OpenAI: {e}")
+        except Exception as e:
+            st.error(f"Chyba při komunikaci s OpenAI: {str(e)}")
     else:
         st.warning("Zadej prosím dotaz.")
