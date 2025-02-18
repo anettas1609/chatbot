@@ -17,7 +17,7 @@ dotaz = st.text_input("Zadej svůj dotaz:")
 if st.button("Odeslat"):
     if dotaz:
         try:
-            response = openai.chat_completions.create(
+            response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",  # nebo použij jiný model jako gpt-4
                 messages=[
                     {"role": "system", "content": "Jsem chatbot zaměřený na kybernetickou bezpečnost."},
