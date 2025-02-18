@@ -1,7 +1,7 @@
 import streamlit as st
 import openai
 
-# Nastavení OpenAI API klíče (nahraď vlastním klíčem)
+# Nastavení OpenAI API klíče (nahraď svým klíčem)
 openai.api_key = "TVŮJ_OPENAI_API_KLÍČ"
 
 # Název aplikace
@@ -17,14 +17,10 @@ dotaz = st.text_input("Zadej svůj dotaz:")
 if st.button("Odeslat"):
     if dotaz:
         try:
-            odpoved = openai.ChatCompletion.create(
+            response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[{"role": "system", "content": "Jsem chatbot zaměřený na kybernetickou bezpečnost."},
                           {"role": "user", "content": dotaz}]
             )
-            st.success(odpoved["choices"][0]["message"]["content"])
-        except Exception as e:
-            st.error("Chyba při komunikaci s OpenAI: " + str(e))
-    else:
-        st.warning("Zadej prosím dotaz.")
-
+            odpoved = response.choices[0].message.content
+   
