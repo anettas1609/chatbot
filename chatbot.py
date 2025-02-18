@@ -1,32 +1,23 @@
-import streamlit as st
 import openai
+import streamlit as st
 
-# Nastavení OpenAI API klíče (nahraď svým klíčem)
-openai.api_key = "TVŮJ_OPENAI_API_KLÍČ"
+# Nastavení API klíče OpenAI
+openai.api_key = "TVŮJ_API_KLÍČ"
 
-# Název aplikace
-st.title("Chatbot pro prevenci kyberkriminality")
+# Nastavení Streamlit aplikace
+st.title("Chatbot na ochranu před kyberkriminalitou")
 
-# Popis aplikace
-st.write("Tento chatbot pomáhá chránit před phishingem a dezinformacemi. Zadej svůj dotaz!")
+# Uživatelský vstup
+user_input = st.text_input("Zadej svůj dotaz:")
 
-# Vstup od uživatele
-dotaz = st.text_input("Zadej svůj dotaz:")
-
-# Odpověď AI po stisknutí tlačítka
+# Odeslání dotazu do OpenAI API
 if st.button("Odeslat"):
-    if dotaz:
-        try:
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",  # nebo použij jiný model jako gpt-4
-                messages=[
-                    {"role": "system", "content": "Jsem chatbot zaměřený na kybernetickou bezpečnost."},
-                    {"role": "user", "content": dotaz}
-                ]
-            )
-            odpoved = response['choices'][0]['message']['content']
-            st.success(odpoved)
-        except Exception as e:
-            st.error(f"Chyba při komunikaci s OpenAI: {str(e)}")
+    if user_input:
+        response = openai.Completion.create(
+            engine="text-davinci-003",  # Správný model pro verzi 0.28
+            prompt=user_input,  # Vstup od uživatele
+            max_tokens=150  # Počet tokenů v odpovědi
+        )
+        st.write(response["choices"][0]["text"])  # Výpis odpovědi
     else:
-        st.warning("Zadej prosím dotaz.")
+        st.wr
