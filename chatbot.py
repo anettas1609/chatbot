@@ -13,8 +13,8 @@ def get_response_from_openai(query):
             max_tokens=150
         )
         return response.choices[0].text.strip()  # Vrací první odpověď
-    except openai.error.OpenAIError as e:
-        return f"Chyba při komunikaci s OpenAI: {e}"
+    except Exception as e:
+        return f"Chyba při komunikaci s OpenAI: {str(e)}"  # Ošetření chyby genericky
 
 # Testovací dotaz
 query = "Jak se bránit podvodným e-mailům?"
