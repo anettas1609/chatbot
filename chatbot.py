@@ -1,48 +1,55 @@
+import os
 import openai
 import streamlit as st
 
-# Načtení API klíče ze secrets
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+# Načtení API klíče z prostředí
+openai_api_key = os.getenv('API_KEY')
 
-# Funkce pro komunikaci s OpenAI API
-def get_response_from_openai(messages):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages,
-        max_tokens=150,
-        temperature=0.7 # Teplota pro řízení kreativity (0.0 = nejvíce striktní, 1.0 = nejvíce kreativní)
-    )
-    return response.choices[0].message["content"].strip()
+# Kontrola, zda je API klíč k dispozici
+if not openai_api_key:
+    st.error("API klíč nebyl nalezen. Přidej ho do GitHub Secrets nebo prostředí.")
+    st.stop()
 
-# Inicializace Streamlit aplikace
-st.title("Chatbot proti dezinformacím a phishingu")
+# Nastavení API klíče pro OpenAI
+openai.api_key = openai_api_key
 
-# Udržování historie zpráv v session state
-if "messages" not in st.session_state:
-    st.session_state["messages"] = []
+# Funkce pro získání odpovědi z OpenAI
+def get_response_from_openai(question):
+    try:
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=question,
+            max_tokens=150,
+            temperature=0.5
+        )
+        return response.choices[0].text.strip()
+    except Exception as e:
+        return f"Chyba při komunikaci s OpenAI: {e}"
 
-# Zobrazení historie zpráv
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# Nastavení Streamlit aplikace
+st.set_page_config(page_title="Chatbot - Prevence kyberkriminality", page_icon="🤖")
+st.title("🤖 Chatbot pro prevenci kyberkriminality")
 
-# Vstup pro uživatele
-user_input = st.text_input("Zadejte Váš dotaz:")
+# Uživatelský vstup
+user_question = st.text_input("Zeptej se na cokoliv ohledně phishingu nebo dezinformací:")
 
-# Odeslání dotazu a získání odpovědi
-if user_input:
-    st.session_state.messages.append({"role": "user", "content": user_input})
-    with st.chat_message("user"):
-        st.markdown(user_input)
+# Zpracování dotazu a zobrazení odpovědi
+if user_question:
+    with st.spinner("Zpracovávám odpověď..."):
+        answer = get_response_from_openai(user_question)
+        st.success(answer)
 
-    # Vytvoření zpráv pro OpenAI API
-    messages = [
-        {"role": "system", "content": "Jsi užitečný chatbot proti dezinformacím a phishingu."},
-        *st.session_state.messages
-    ]
-
-    response = get_response_from_openai(messages)
-
-    st.session_state.messages.append({"role": "assistant", "content": response})
-    with st.chat_message("assistant"):
-        st.markdown(response)
+# Příklad doporučených dotazů
+st.markdown("""
+### Příklady dotazů:
+- Jak poznám phishingový e-mail?
+- Jak se bránit podvodným SMS zprávám?
+- Co dělat, když kliknu na podezřelý odkaz?
+- Jak se chránit před dezinformacemi na sociálních sítích?
+- Jak ověřit pravost webové stránky?
+- Jaké jsou nejčastější typy kyberpodvodů?
+- Jak mohu bezpečně používat veřejné Wi-Fi sítě?
+- Co je dvoufaktorová autentizace a proč je důležitá?
+- Jak chránit svá osobní data online?
+- Jak rozpoznat podvodné telefonáty?
+""")
