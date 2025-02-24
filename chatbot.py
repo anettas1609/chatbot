@@ -1,5 +1,6 @@
-import streamlit as st
 import os
 
 api_key = os.getenv("API_KEY")
-st.write("API_KEY načten:", bool(api_key))
+
+if not api_key:
+    raise ValueError("API klíč nebyl nalezen. Přidej ho do GitHub Secrets nebo prostředí.")
