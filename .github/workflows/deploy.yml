@@ -1,0 +1,29 @@
+name: Deploy to Streamlit Cloud
+
+on:
+  push:
+    branches:
+      - main  # Tento workflow se spustí při push do větve main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Spustí se na poslední verzi Ubuntu
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Získá kód z repozitáře
+
+      - name: Set up Python
+        uses: actions/setup-python@v2  # Nastaví Python prostředí
+        with:
+          python-version: '3.x'  # Použije Python 3
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt  # Instalace závislostí
+
+      - name: Run the app
+        run: |
+          streamlit run chatbot.py  # Spustí aplikaci
+        env:
+          API_KEY: ${{ secrets.API_KEY }}  # Použije API_KEY z GitHub Secrets
