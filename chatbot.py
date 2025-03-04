@@ -11,14 +11,15 @@ if openai.api_key is None:
 else:
     st.success("API klíč je načtený.")
 
-# Funkce pro chatbota
+# Funkce pro chatbota s novým API
 def get_chatbot_response(prompt):
-    response = openai.Completion.create(
-        engine="text-davinci-003",  # Můžeš změnit podle potřeby
-        prompt=prompt,
-        max_tokens=150
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",  # Můžeš změnit podle potřeby na jiný model (např. gpt-4)
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
     )
-    return response.choices[0].text.strip()
+    return response.choices[0].message['content'].strip()
 
 # Streamlit rozhraní pro interakci s chatbotem
 st.title("Chatbot s OpenAI API")
