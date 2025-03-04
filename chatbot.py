@@ -1,10 +1,20 @@
-import os
+from flask import Flask, request, jsonify
+import openai
 
-# Získání API klíče z prostředí
-api_key = os.getenv('API_KEY')
+# Nastavení API klíče
+openai.api_key = "tvůj_api_klíč"  # nebo použít Vercel secrets
 
-# Zkontroluj, zda je klíč načten
-if api_key:
-    print("API key was successfully loaded from GitHub Secrets.")
-else:
-    print("API key was not found.")
+app = Flask(__name__)
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_input = request.json.get("input")
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=user_input,
+        max_tokens=150
+    )
+    return jsonify({"response": response.choices[0].text.strip()})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
