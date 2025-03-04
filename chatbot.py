@@ -1,28 +1,30 @@
-import os
 import openai
+import os
 import streamlit as st
 
-# Načtení API klíče z GitHub Secrets
-api_key = os.getenv('API_KEY')
+# Načteme API klíč z prostředí
+openai.api_key = os.getenv("API_KEY")  # Předpokládáme, že je uložený v GitHub Secrets
 
-# Kontrola, zda je API klíč k dispozici
-if not api_key:
-    st.error("API klíč nebyl nalezen. Přidej ho do GitHub Secrets nebo prostředí.")
+# Ověření, zda je API klíč správně načten
+if openai.api_key is None:
+    st.error("API klíč není nalezen. Zkontrolujte, že je nastavený v GitHub Secrets.")
 else:
-    st.success(f"API klíč načten: {api_key[:10]}...")  # Zobrazí první 10 znaků klíče pro kontrolu
+    st.success("API klíč je načtený.")
 
-    # Nastavení OpenAI API klíče
-    openai.api_key = api_key
+# Funkce pro chatbota
+def get_chatbot_response(prompt):
+    response = openai.Completion.create(
+        engine="text-davinci-003",  # Můžeš změnit podle potřeby
+        prompt=prompt,
+        max_tokens=150
+    )
+    return response.choices[0].text.strip()
 
-    # Příklad jednoduché interakce s OpenAI API
-    prompt = st.text_input("Zadej text pro Chatbot:")
-    if prompt:
-        try:
-            response = openai.Completion.create(
-                engine="text-davinci-003",  # Můžeš použít jiný model dle potřeby
-                prompt=prompt,
-                max_tokens=150
-            )
-            st.write(response.choices[0].text.strip())
-        except Exception as e:
-            st.error(f"Došlo k chybě při komunikaci s OpenAI: {e}")
+# Streamlit rozhraní pro interakci s chatbotem
+st.title("Chatbot s OpenAI API")
+
+user_input = st.text_input("Zadej svůj dotaz:")
+
+if user_input:
+    bot_response = get_chatbot_response(user_input)
+    st.write(f"Chatbot odpověděl: {bot_response}")
